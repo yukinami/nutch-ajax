@@ -47,7 +47,6 @@ public class HttpWebClient {
                     webClient.setCache(new ExtHtmlunitCache());
                     // Enhanced WebConnection based on urlfilter
                     webClient.setWebConnection(new RegexHttpWebConnection(webClient, conf));
-                    webClient.waitForBackgroundJavaScript(600 * 1000);
                     //设置足够高度以支持一些需要页面内容多需屏幕滚动显示的页面
                     webClient.getCurrentWindow().setInnerHeight(6000);
                     if (acceptLanguage == null && conf != null) {

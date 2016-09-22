@@ -35,4 +35,7 @@
     <artifact conf="master"/>
   </publications>
 
+  <dependencies>
+  </dependencies>
+  
 </ivy-module>

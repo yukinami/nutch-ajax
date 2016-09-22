@@ -29,42 +29,15 @@
 # for a more extensive coverage use the urlfilter-suffix plugin
 -\.(ico|ICO|sit|SIT|eps|EPS|wmf|WMF|zip|ZIP|ppt|PPT|mpg|MPG|xls|XLS|gz|GZ|rpm|RPM|tgz|TGZ|mov|MOV|exe|EXE)$
 
-# other excluding rules
-################ vip.com ######################
+# statistics
+-^http://www.google-analytics.com
 -^http://stats.g.doubleclick.net.*
 -^http://mvp.mediav.com.*
 -^http://hm.baidu.com.*
 -^http://dat.gtags.net/imp/dasp3.*
 -^http://dmp.kejet.net.*
 -^http://cms.gtags.net.*
-
-################ jumei.com ######################
--^http://www.google-analytics.com
 -^http://cpro.baidu.com
--^http://search.jumei.com/ajax_get_default_word
--^http://click.srv.jumei.com
--^http://www.jumei.com/serverinfo.php
--^http://cart.jumei.com/i/ajax/get_cart_data
--^http://www.jumei.com/i/ajax/get_view_history
--^http://www.jumei.com/i/ajax/get_recommend_by_history
--^http://www.jumei.com/i/ajax/get_keyword_pro
--^http://eclick.baidu.com
-
-################## www.scjtaq.com ###################
--\.js
--^http://c.cnzz.com
--^http://m.weather.com.cn
--^http://hzs16.cnzz.com
-
-################## jt.cpd.com.cn ###################
--\.js
--^http://.*#.*
--^http://jt.cpd.com.cn/template
--^http://.*.baidu.com/.*
--^http://.*.baidustatic.com/.*
--^http://comment.cpd.com.cn
--^http://www.cpd.com.cn
--^http://home.cpd.com.cn
 
 # accept anything else
 +.*

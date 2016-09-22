@@ -1,5 +1,58 @@
 Nutch Change Log
 
+Nutch 2.3.1 Release 22092015 (ddmmyyyy)
+Release Report - http://s.apache.org/nutch_2.3.1
+
+* NUTCH-2168 Parse-tika fails to retrieve parser (snagel, Auro Miralles, lewismc)
+
+* NUTCH-2169 Integrate index-html into Nutch build (snagel)
+
+* NUTCH-2143 GeneratorJob ignores batch id passed as argument (liuqibj, lewismc, snagel)
+
+* NUTCH-2042 parse-html increase chunk size used to detect charset (snagel)
+
+* NUTCH-2107 plugin.xml to validate against plugin.dtd (snagel)
+
+* NUTCH-2130 copyField rawcontent creates error within schema.xml (Sherban Drulea, lewismc, snagel)
+
+* NUTCH-2018 Ensure that the Docker containers for Nutch 2.X are part of the Release Management Documentation (lewismc)
+
+* NUTCH-2105 Update Nutch Cassandra Dockerfile to work with Gora Nutch 2.3.1 (lewismc)
+
+* NUTCH-1946 Upgrade to Gora 0.6.1 (lewismc, hsaputra, Jeroen Vlek)
+
+* NUTCH-2094 Stopping and Restarting a crawl has issues in the Web UI (Prerna Satija via mattmann)
+
+* NUTCH-1679 UpdateDb using batchId, link may override crawled page (Tien Nguyen Manh, Koen Smets, Alfonso Nishikawa, Alexander Kingson via lewismc)
+
+* NUTCH-2077 Upgrade to Tika 1.10 (Michael Joyce, lewismc)
+
+* NUTCH-2045 index-basic incorrect assignment of next fetch time (page.getFetchTime()) as page fetch time (lewismc)
+
+* NUTCH-2019 ClassPathException sending topN argument for /job/create using Nutch 2.x RESTApi (Alex Koh, lewismc)
+
+* NUTCH-1923 Nutch + Cassandra Docker (Mohamed Meabed via lewismc)
+
+* NUTCH-1994 Upgrade to Apache Tika 1.8 (lewismc)
+
+* NUTCH-1990 Use URI.normalise() in BasicURLNormalizer (snagel, jnioche)
+
+* NUTCH-1981 Upgrade to icu4j 55.1 (Marko Asplund via snagel)
+
+* NUTCH-1944 Index HTML raw content (meabed via mattmann)
+
+* NUTCH-1941 Optional rolling http.agent.name's (Asitang Mishra, lewismc via snagel)
+
+* NUTCH-1925 Upgrade to Apache Tika 1.7 palsulich.p2.v2.patch (Tyler Palsulich via lewismc)
+
+* NUTCH-1925 Upgrade to Apache Tika 1.7 (Tyler Palsulich via markus)
+
+* NUTCH-1924 Nutch + HBase Docker (Radosław Stankiewicz via lewismc)
+
+* NUTCH-1920 Upgrade Nutch to use Java 1.7 (lewismc)
+
+* NUTCH-1893 Parse-tika failes to parse feed files (Mengying Wang via snagel)
+
 Nutch 2.3 Release 08012015 (ddmmyyyy)
 Release Report - http://s.apache.org/nutch_2.3
 

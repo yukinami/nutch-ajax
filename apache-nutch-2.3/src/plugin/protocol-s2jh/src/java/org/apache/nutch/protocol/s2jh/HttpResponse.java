@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,24 +18,7 @@ package org.apache.nutch.protocol.s2jh;
 
 // JDK imports
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PushbackInputStream;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.URL;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
-
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.apache.avro.util.Utf8;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -53,15 +36,24 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+import java.io.*;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.URL;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
-/** 
+/**
  * An smart http fetcher.  Using HTTP, Htmlunit and Selenium WebDriver to fetch ajax page document.
  * Check the integrity of (AJAX) http response based on org.apache.nutch.parse.s2jh.isParseDataFetchLoaded callback method
  * First, try to use basic HTTP Socket to fetch page content, if we don't get expected content, continue,
  * Second, try to use Htmlunit to fetch page content, if we don't get expected content, continue,
  * Third, try to use Selenium WebDriver to fetch page content
- * 
+ *
  * @author EMAIL:s2jh-dev@hotmail.com , QQ:2414521719
  */
 public class HttpResponse implements Response {
@@ -153,7 +145,7 @@ public class HttpResponse implements Response {
             conf = http.getConf();
             if (sockAddr != null && conf.getBoolean("store.ip.address", false) == true) {
                 String ipString = sockAddr.getAddress().getHostAddress(); // get the ip
-                                                                          // address
+                // address
                 page.getMetadata().put(new Utf8("_ip_"), ByteBuffer.wrap(ipString.getBytes()));
             }
 
@@ -204,7 +196,7 @@ public class HttpResponse implements Response {
             req.flush();
 
             PushbackInputStream in = // process response
-            new PushbackInputStream(new BufferedInputStream(socket.getInputStream(), Http.BUFFER_SIZE), Http.BUFFER_SIZE);
+                    new PushbackInputStream(new BufferedInputStream(socket.getInputStream(), Http.BUFFER_SIZE), Http.BUFFER_SIZE);
 
             StringBuffer line = new StringBuffer();
 
@@ -223,12 +215,6 @@ public class HttpResponse implements Response {
                 } else {
                     readPlainContentByWebDriver(url);
                 }
-            }
-
-            if (content != null && content.length > 0) {
-                String html = charset == null ? new String(content) : new String(content, charset);
-                //System.out.println("URL: " + url + ", CharsetName: " + charset + " , Page HTML=\n" + html);
-                Http.LOG_HTML.trace("URL: " + url + ", CharsetName: " + charset + " , Page HTML=\n" + html);
             }
 
             // add headers in metadata to row
@@ -280,9 +266,7 @@ public class HttpResponse implements Response {
         if (forceAjax) {
             return false;
         }
-        if (urlStr.indexOf("detail.tmall.com") > -1) {
-            return false;
-        }
+
         int contentLength = Integer.MAX_VALUE; // get content length
         String contentLengthString = headers.get(Response.CONTENT_LENGTH);
         if (contentLengthString != null) {
@@ -295,8 +279,8 @@ public class HttpResponse implements Response {
             }
         }
         if (http.getMaxContent() >= 0 && contentLength > http.getMaxContent()) // limit
-                                                                               // download
-                                                                               // size
+            // download
+            // size
             contentLength = http.getMaxContent();
 
         ByteArrayOutputStream out = new ByteArrayOutputStream(Http.BUFFER_SIZE);
@@ -319,28 +303,31 @@ public class HttpResponse implements Response {
             }
         }
 
-        boolean ok = isParseDataFetchLoaded(urlStr, new String(out.toByteArray()));
-        if (ok) {
-            content = out.toByteArray();
-
+        if (out.size() > 0) {
+            byte[] contentBytes = out.toByteArray();
             String contentEncoding = getHeader(Response.CONTENT_ENCODING);
             if ("gzip".equals(contentEncoding) || "x-gzip".equals(contentEncoding)) {
-                content = http.processGzipEncoded(content, url);
+                contentBytes = http.processGzipEncoded(contentBytes, url);
             } else {
                 if (Http.LOG.isTraceEnabled()) {
                     Http.LOG.trace("fetched " + content.length + " bytes from " + url);
                 }
             }
+
+            String html = charset == null ? new String(contentBytes) : new String(contentBytes, charset);
+
+            if (isParseDataFetchLoaded(urlStr, html)) {
+                Http.LOG_HTML.trace("URL: " + url + ", CharsetName: " + charset + " , Page HTML=\n" + html);
+                return true;
+            }
         }
-        return ok;
+
+        return false;
     }
 
     private boolean readPlainContentByHtmlunit(URL url) throws Exception {
 
         String urlStr = url.toString();
-        if (urlStr.indexOf("detail.tmall.com") > -1) {
-            return false;
-        }
         Http.LOG.debug("Htmlunit fetching: " + url);
         HtmlPage page = (HtmlPage) HttpWebClient.getHtmlPage(urlStr, conf);
         charset = page.getPageEncoding();
@@ -349,23 +336,26 @@ public class HttpResponse implements Response {
 
         int i = 0;
         while (i++ < MAX_AJAX_WAIT_SECONDS) {
+            Thread.sleep(1000);
             html = page.asXml();
             ok = isParseDataFetchLoaded(urlStr, html);
             if (ok) {
                 break;
             }
             Http.LOG.info("Sleep " + i + " seconds to wait Htmlunit execution...");
-            Thread.sleep(1000);
-        }
-        if (ok == true) {
-            this.code = 200;
-            Http.LOG.debug("Success parse page by Htmlunit  for: {}", url);
-            html = StringUtils.substringAfter(html, "?>").trim();
         }
 
         if (ok) {
             this.code = 200;
-            content = html.getBytes();
+            Http.LOG.debug("Success parse page by Htmlunit  for: {}", url);
+
+            if (StringUtils.isNotBlank(html)) {
+                html = StringUtils.substringAfter(html, "?>").trim();
+                content = html.getBytes();
+
+                Http.LOG_HTML.trace("URL: " + url + ", CharsetName: " + charset + " , Page HTML=\n" + html);
+            }
+
         } else {
             Http.LOG.warn("Failure Htmlunit parse page for: {}", url);
             Http.LOG.warn("Htmlunit Fetch Failure URL: " + url + ", CharsetName: " + charset + " , Page HTML=\n" + html);
@@ -414,7 +404,11 @@ public class HttpResponse implements Response {
         if (ok) {
             Http.LOG.debug("Success parse page by WebDriver  for: {}", url);
             this.code = 200;
-            content = html.getBytes();
+
+            if (StringUtils.isNotBlank(html)) {
+                content = html.getBytes();
+                Http.LOG_HTML.trace("URL: " + url + ", CharsetName: " + charset + " , Page HTML=\n" + html);
+            }
         } else {
             Http.LOG.warn("Failure WebDriver parse page for: {}", url);
             Http.LOG.warn("WebDriver Fetch Failure URL: " + url + ", CharsetName: " + charset + " , Page HTML=\n" + html);
@@ -424,8 +418,8 @@ public class HttpResponse implements Response {
     /**
      * Check excepted data has loaded within the current AJAX page content
      * If not we need sleep sometime to wait ajax execution to get more content  
-     * @param url 
-     * @param html 
+     * @param url
+     * @param html
      * @return
      */
     private boolean isParseDataFetchLoaded(String url, String html) {
@@ -446,7 +440,7 @@ public class HttpResponse implements Response {
     }
 
     /**
-     * 
+     *
      * @param in
      * @param line
      * @throws HttpException
@@ -608,25 +602,25 @@ public class HttpResponse implements Response {
         line.setLength(0);
         for (int c = in.read(); c != -1; c = in.read()) {
             switch (c) {
-            case '\r':
-                if (peek(in) == '\n') {
-                    in.read();
-                }
-            case '\n':
-                if (line.length() > 0) {
-                    // at EOL -- check for continued line if the current
-                    // (possibly continued) line wasn't blank
-                    if (allowContinuedLine)
-                        switch (peek(in)) {
-                        case ' ':
-                        case '\t': // line is continued
-                            in.read();
-                            continue;
-                        }
-                }
-                return line.length(); // else complete
-            default:
-                line.append((char) c);
+                case '\r':
+                    if (peek(in) == '\n') {
+                        in.read();
+                    }
+                case '\n':
+                    if (line.length() > 0) {
+                        // at EOL -- check for continued line if the current
+                        // (possibly continued) line wasn't blank
+                        if (allowContinuedLine)
+                            switch (peek(in)) {
+                                case ' ':
+                                case '\t': // line is continued
+                                    in.read();
+                                    continue;
+                            }
+                    }
+                    return line.length(); // else complete
+                default:
+                    line.append((char) c);
             }
         }
         throw new EOFException();

@@ -5,16 +5,14 @@
 
 <configuration>
 
-    <!-- Just for development, please remove this plugin.folders for production env -->
 	<property>
-		<name>plugin.folders</name>
-		<value>./src/plugin</value>
+		<name>http.agent.name</name>
+		<value>My Nutch Spider</value>
 	</property>
-
 
 	<property>
 		<name>plugin.includes</name>
-		<value>protocol-s2jh|urlfilter-regex|parse-(html|s2jh)|index-(basic|s2jh)|urlnormalizer-(pass|regex|basic)|scoring-opic|indexer-solr</value>
+		<value>protocol-s2jh|urlfilter-regex|parse-(html|s2jh)|index-(basic|anchor)|urlnormalizer-(pass|regex|basic)|scoring-opic|indexer-solr</value>
 		<description>Regular expression naming plugin directory names to
 			include. Any plugin not matching this expression is
 			excluded.
@@ -68,17 +66,12 @@
 	
 	<property>
 	  <name>fetcher.server.delay</name>
-	  <value>0</value>
+	  <value>5.0</value>
 	  <description>The number of seconds the fetcher will delay between 
 	   successive requests to the same server. Note that this might get
 	   overriden by a Crawl-Delay from a robots.txt and is used ONLY if 
 	   fetcher.threads.per.queue is set to 1.
 	   </description>
-	</property>
-  
-	<property>
-		<name>http.agent.name</name>
-		<value>Your Nutch Spider</value>
 	</property>
 
 	<property>
@@ -114,7 +107,7 @@
     <!-- Custom extension plug-in properties -->
 	<property>
 		<name>fetch.force.ajax.support</name>
-		<value>true</value>
+		<value>false</value>
 		<description>
 			true: Force using Htmlunit or WebDriver to fetch content
 			false: First using HTTP without ajax support, if
@@ -123,7 +116,7 @@
 	</property>
 	<property>
 		<name>parse.img.save.dir</name>
-		<value>C:\\nutch\\</value>
+		<value>/tmp/nutch</value>
 		<description>
 			Image files saved ROOT dir. Sub paths based on img src url.
 		</description>

@@ -40,31 +40,10 @@
               name="HtmlParseFilter"
               point="org.apache.nutch.parse.ParseFilter">
 
-      <implementation id="huanqiuHtmlParseFilter"
-                      class="org.apache.nutch.parse.s2jh.HuanqiuHtmlParseFilter">
-      </implementation>
- 
-      <!-- 
-      <implementation id="scjtaqHtmlParseFilter"
-                      class="org.apache.nutch.parse.s2jh.ScjtaqHtmlParseFilter">
-      </implementation>
-      <implementation id="jtCpdHtmlParseFilter"
-                      class="org.apache.nutch.parse.s2jh.JtCpdHtmlParseFilter">
-      </implementation>
+       <!-- replace noOp filter with your own filter -->
+       <implementation id="noOpHtmlParseFilter"
+                       class="org.apache.nutch.parse.s2jh.NoOpHtmlParseFilter">
+       </implementation>
 
-      
-      <implementation id="tmallHtmlParseFilter"
-                      class="org.apache.nutch.parse.s2jh.TMallHtmlParseFilter">
-      </implementation>
-
-      <implementation id="vipHtmlParseFilter"
-                      class="org.apache.nutch.parse.s2jh.VipHtmlParseFilter">
-      </implementation>
-
-      <implementation id="jumeiHtmlParseFilter"
-                      class="org.apache.nutch.parse.s2jh.JumeiHtmlParseFilter">
-      </implementation>
-      -->
-      
    </extension> 
 </plugin>
